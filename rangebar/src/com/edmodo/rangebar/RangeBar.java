@@ -810,13 +810,9 @@ public class RangeBar extends View {
     private void moveThumb(Thumb thumb, float x) {
 
         // If the user has moved their finger outside the range of the bar,
-        // do not move the thumbs past the edge.
-        if (x < mBar.getLeftX() || x > mBar.getRightX()) {
-            // Do nothing.
-        } else {
-            thumb.setX(x);
-            invalidate();
-        }
+        // x gets limited to the bar with.
+        thumb.setX(Math.min(mBar.getRightX(), Math.max(x, mBar.getLeftX())));
+        invalidate();
     }
 
     // Inner Classes ///////////////////////////////////////////////////////////
