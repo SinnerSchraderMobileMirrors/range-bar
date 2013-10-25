@@ -87,19 +87,23 @@ class Bar {
     /**
      * Get the x-coordinate of the left edge of the bar.
      * 
+     * @param indexOffset
+     *            The index offset to add to the real left x value;
      * @return x-coordinate of the left edge of the bar
      */
-    float getLeftX() {
-        return mLeftX;
+    float getLeftX(int indexOffset) {
+        return mLeftX + (mTickDistance * indexOffset);
     }
 
     /**
      * Get the x-coordinate of the right edge of the bar.
-     * 
+     *
+     * @param indexOffset
+     *            The index offset to substract from the real right x value;
      * @return x-coordinate of the right edge of the bar
      */
-    float getRightX() {
-        return mRightX;
+    float getRightX(int indexOffset) {
+        return mRightX - (mTickDistance * indexOffset);
     }
 
     /**

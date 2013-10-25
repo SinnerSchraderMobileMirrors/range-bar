@@ -87,6 +87,9 @@ public class RangeBar extends View {
     private RangeBar.OnRangeBarChangeListener mListener;
     private int mLeftIndex = 0;
     private int mRightIndex = mTickCount - 1;
+    
+    private int                               mLeftIndexOffset                  = 0;
+    private int                               mRightIndexOffset                 = 0;
 
     // Constructors ////////////////////////////////////////////////////////////
 
@@ -502,6 +505,16 @@ public class RangeBar extends View {
         requestLayout();
 
     }
+    
+    public void setThumbLimits(int leftIndexLimit, int rightIndexLimit) {
+        if (indexOutOfRange(leftIndexLimit, rightIndexLimit)) {
+            Log.e(TAG, "A thumb index limit is out of bounds. Check that it is between 0 and mTickCount - 1");
+            throw new IllegalArgumentException("A thumb index limit is out of bounds. Check that it is between 0 and mTickCount - 1");
+        } else {
+            mLeftIndexOffset = leftIndexLimit;
+            mRightIndexOffset = mTickCount - rightIndexLimit - 1;
+        }
+    }
 
     /**
      * Gets the index of the left-most thumb.
@@ -708,7 +721,16 @@ public class RangeBar extends View {
      * @param y the y-coordinate of the down action
      */
     private boolean onActionDown(float x, float y) {
-
+        if (mLeftThumb.isInTargetZone(x, y) && mRightThumb.isInTargetZone(x, y)) {
+            float distanceLeftToTouch = x - mLeftThumb.getX();
+            float distanceRightToTouch = mRightThumb.getX() - x;
+            if (distanceLeftToTouch <= distanceRightToTouch) {
+                pressThumb(mLeftThumb);
+            } else {
+                pressThumb(mRightThumb);
+            }
+            return true;
+        }
         if (!mLeftThumb.isPressed() && mLeftThumb.isInTargetZone(x, y)) {
 
             pressThumb(mLeftThumb);
@@ -811,7 +833,11 @@ public class RangeBar extends View {
 
         // If the user has moved their finger outside the range of the bar,
         // x gets limited to the bar with.
-        thumb.setX(Math.min(mBar.getRightX(), Math.max(x, mBar.getLeftX())));
+        if (thumb == mLeftThumb) {
+            thumb.setX(Math.min(mBar.getRightX(mRightIndexOffset), Math.max(x, mBar.getLeftX(0))));
+        } else {
+            thumb.setX(Math.min(mBar.getRightX(0), Math.max(x, mBar.getLeftX(mLeftIndexOffset))));
+        }
         invalidate();
     }
 
