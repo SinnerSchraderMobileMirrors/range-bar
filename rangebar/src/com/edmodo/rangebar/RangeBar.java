@@ -282,8 +282,7 @@ public class RangeBar extends View {
         switch (event.getAction()) {
 
             case MotionEvent.ACTION_DOWN:
-                onActionDown(event.getX(), event.getY());
-                return true;
+                return onActionDown(event.getX(), event.getY());
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
@@ -708,16 +707,18 @@ public class RangeBar extends View {
      * @param x the x-coordinate of the down action
      * @param y the y-coordinate of the down action
      */
-    private void onActionDown(float x, float y) {
+    private boolean onActionDown(float x, float y) {
 
         if (!mLeftThumb.isPressed() && mLeftThumb.isInTargetZone(x, y)) {
 
             pressThumb(mLeftThumb);
-
+            return true;
         } else if (!mLeftThumb.isPressed() && mRightThumb.isInTargetZone(x, y)) {
 
             pressThumb(mRightThumb);
+            return true;
         }
+        return false;
     }
 
     /**
